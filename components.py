@@ -22,13 +22,16 @@ def display_app_title():
 
 
 def display_select_mode():
+    # サイドバーに利用目的の表示（追記：課題3）
+    st.sidebar.markdown("### **利用目的**")
     """
     回答モードのラジオボタンを表示
     """
     # 回答モードを選択する用のラジオボタンを表示
     col1, col2 = st.columns([100, 1])
     with col1:
-        # 「label_visibility="collapsed"」とすることで、ラジオボタンを非表示にする（追記：課題3）
+        # 「label_visibility="collapsed"」とすることで、ラジオボタンを非表示にする
+        #  サイドバーに移動（追記：課題3）
         st.session_state.mode = st.sidebar.radio(
             label="",
             options=[ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
@@ -42,7 +45,7 @@ def display_initial_ai_message():
     """
     with st.chat_message("assistant"):
         # 「st.success()」とすると緑枠で表示される（追記：課題3）
-        st.success("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。<br>サイドバーで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
+        st.success("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。  \nサイドバーで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
 
         # 「st.warning()」とすると黄色枠で表示される（追記：課題3）
         st.warning("⚠️具体的に入力したほうが期待通りの回答を得やすいです。")
@@ -89,7 +92,7 @@ def display_conversation_log():
 
                         # 参照元のありかに応じて、適したアイコンを取得
                         icon = utils.get_source_icon(message['content']['main_file_path'])
-                        # 参照元ドキュメントのページ番号が取得できた場合にのみ、ページ番号を表示
+                        # 参照元ドキュメントのページ番号が取得できた場合にのみ、ページ番号を表示（追記：課題4）
                         if "main_page_number" in message["content"]:
                             st.success(
                                 f"{message['content']['main_file_path']}（ページNo.{message['content']['main_page_number'] + 1}）",
@@ -109,7 +112,7 @@ def display_conversation_log():
                             for sub_choice in message["content"]["sub_choices"]:
                                 # 参照元のありかに応じて、適したアイコンを取得
                                 icon = utils.get_source_icon(sub_choice['source'])
-                                # 参照元ドキュメントのページ番号が取得できた場合にのみ、ページ番号を表示
+                                # 参照元ドキュメントのページ番号が取得できた場合にのみ、ページ番号を表示（追記：課題4）
                                 if "page_number" in sub_choice:
                                     st.info(
                                         f"{sub_choice['source']}（ページNo.{sub_choice['page_number'] + 1}）",
@@ -164,7 +167,7 @@ def display_search_llm_response(llm_response):
         
         # 参照元のありかに応じて、適したアイコンを取得
         icon = utils.get_source_icon(main_file_path)
-        # ページ番号が取得できた場合のみ、ページ番号を表示（ドキュメントによっては取得できない場合がある）
+        # ページ番号が取得できた場合のみ、ページ番号を表示（ドキュメントによっては取得できない場合がある）（追記：課題4）
         if "page" in llm_response["context"][0].metadata:
             main_page_number = llm_response["context"][0].metadata["page"]
             st.success(f"{main_file_path}（ページNo.{main_page_number + 1}）", icon=icon)
@@ -220,7 +223,7 @@ def display_search_llm_response(llm_response):
             for sub_choice in sub_choices:
                 # 参照元のありかに応じて、適したアイコンを取得
                 icon = utils.get_source_icon(sub_choice['source'])
-                # ページ番号が取得できない場合のための分岐処理
+                # ページ番号が取得できない場合のための分岐処理（追記：課題4）
                 if "page_number" in sub_choice:
                     st.info(f"{sub_choice['source']}（ページNo.{sub_choice['page_number'] + 1}）", icon=icon)
                 else:
@@ -297,7 +300,7 @@ def display_contact_llm_response(llm_response):
             if file_path in file_path_list:
                 continue
 
-            # ページ番号が取得できた場合のみ、ページ番号を表示
+            # ページ番号が取得できた場合のみ、ページ番号を表示（追記：課題4）
             if "page" in document.metadata:
                 page_number = document.metadata["page"]
                 file_info = f"{file_path}（ページNo.{page_number + 1}）"

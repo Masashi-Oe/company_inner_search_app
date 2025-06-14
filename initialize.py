@@ -19,7 +19,8 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 import constants as ct
-
+from langchain_core.documents import Document
+import pandas as pd # 追記：課題6
 
 ############################################################
 # 設定関連
@@ -158,6 +159,7 @@ def load_data_sources():
     Returns:
         読み込んだ通常データソース
     """
+
     # データソースを格納する用のリスト
     docs_all = []
     # ファイル読み込みの実行（渡した各リストにデータが格納される）
@@ -175,6 +177,18 @@ def load_data_sources():
     # 通常読み込みのデータソースにWebページのデータを追加
     docs_all.extend(web_docs_all)
 
+    # 社員名簿.csv を1つのドキュメントに統合（追記：課題6）
+    df = pd.read_csv("data/社員について/社員名簿.csv")
+    rows = []
+    for idx, row in df.iterrows():
+        row_text = ", ".join([f"{col}:{row[col]}" for col in df.columns])
+        rows.append(row_text)
+    full_text = "\n".join(rows)
+
+    # メタデータ
+    docs_all.append(Document(page_content=full_text, metadata={"source": "社員名簿.csv"}))
+
+    # 読み込んだデータソースを返す
     return docs_all
 
 
