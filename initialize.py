@@ -18,9 +18,9 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
-import constants as ct
 from langchain_core.documents import Document
-import pandas as pd # 追記：課題6
+import constants as ct
+
 
 ############################################################
 # 設定関連
@@ -177,18 +177,6 @@ def load_data_sources():
     # 通常読み込みのデータソースにWebページのデータを追加
     docs_all.extend(web_docs_all)
 
-    # 社員名簿.csv を1つのドキュメントに統合（追記：課題6）
-    df = pd.read_csv("data/社員について/社員名簿.csv")
-    rows = []
-    for idx, row in df.iterrows():
-        row_text = ", ".join([f"{col}:{row[col]}" for col in df.columns])
-        rows.append(row_text)
-    full_text = "\n".join(rows)
-
-    # メタデータ
-    docs_all.append(Document(page_content=full_text, metadata={"source": "社員名簿.csv"}))
-
-    # 読み込んだデータソースを返す
     return docs_all
 
 
@@ -234,7 +222,6 @@ def file_load(path, docs_all):
         # CSV統合処理（追記：課題6）
         if file_extension == ".csv" and len(docs) > 1:
             # 各行のテキストを結合して1つのドキュメントにする
-            from langchain_core.documents import Document
             merged_text = "\n".join([doc.page_content for doc in docs])
             # メタデータは最初の行のものを流用し、ファイル名だけ正しくセット
             merged_metadata = dict(docs[0].metadata) if docs else {}
